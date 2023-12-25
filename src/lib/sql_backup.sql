@@ -1,3 +1,4 @@
+create database sms;
 USE sms;
 
 create table Customer
