@@ -23,7 +23,7 @@ public class TestProductDAO {
 //        }
 
         /* Test delete */
-//        for (int i = 1; i < 100; i++) {
+//        for (int i = 1; i <= 100; i++) {
 //            ProductDAO.delete(i);
 //        }
 
@@ -34,13 +34,7 @@ public class TestProductDAO {
 //        }
 
         /* Test select by id */
-//        Order order = OrderDAO.selectById(5);
-//        System.out.println(order.toString());
-
-        /* Test select by condition */
-        ArrayList<Product> list = ProductDAO.selectByCondition("product_id < 10");
-        for (Product product : list) {
-            System.out.println(product.toString());
-        }
+//        Product product = ProductDAO.selectById(5);
+//        System.out.println(product.toString());
     }
 }

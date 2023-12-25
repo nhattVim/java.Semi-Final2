@@ -24,7 +24,7 @@ public class TestCustomerDAO {
 //        for (int i = 0; i <= 100; i++) {
 //            CustomerDAO.delete(i);
 //        }
-
+//
         /* Test select all */
 //        ArrayList<Customer> list = CustomerDAO.selectAll();
 //        for (Customer customer : list) {
@@ -32,13 +32,7 @@ public class TestCustomerDAO {
 //        }
 
         /* Test select by id */
-//        Customer customer = CustomerDAO.selectById(18);
+//        Customer customer = CustomerDAO.selectById(1);
 //        System.out.println(customer.toString());
-
-        /* Test select by condition */
-        ArrayList<Customer> list = CustomerDAO.selectByCondition("customer_id < 10");
-        for (Customer customer : list) {
-            System.out.println(customer.toString());
-        }
     }
 }

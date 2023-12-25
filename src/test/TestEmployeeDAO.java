@@ -36,11 +36,5 @@ public class TestEmployeeDAO {
         /* Test select by id */
 //        Employee employee = EmployeeDAO.selectById(18);
 //        System.out.println(employee.toString());
-
-        /* Test select by condition */
-        ArrayList<Employee> list = EmployeeDAO.selectByCondition("employee_id < 10");
-        for (Employee employee : list) {
-            System.out.println(employee.toString());
-        }
     }
 }

@@ -24,11 +24,11 @@ public class TestLineItemDAO {
 //        }
 
         /* Test update */
-//        LineItem lineItem = new LineItem(93, 39, 9000, 200000);
+//        LineItem lineItem = new LineItem(51, 32, 9000, 200000);
 //        LineItemDAO.update(lineItem);
 
         /* Test delete */
-//        LineItemDAO.delete(66, 89);
+//        LineItemDAO.delete(51, 32);
 
         /* Test select all */
 //        ArrayList<LineItem> list = LineItemDAO.selectAll();
@@ -37,13 +37,7 @@ public class TestLineItemDAO {
 //        }
 
         /* Test select by id */
-//        LineItem lineItem = LineItemDAO.selectById(94, 63);
+//        LineItem lineItem = LineItemDAO.selectById(48, 46);
 //        System.out.println(lineItem.toString());
-
-        /* Test select by condition */
-//        ArrayList<LineItem> list = LineItemDAO.selectByCondition("order_id < 10 AND product_id < 10");
-//        for (LineItem lineItem : list) {
-//            System.out.println(lineItem.toString());
-//        }
     }
 }

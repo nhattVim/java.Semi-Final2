@@ -5,6 +5,7 @@ import entities.Employee;
 import entities.LineItem;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -14,11 +15,13 @@ public class LineItemDAO {
     public static void insert(LineItem lineItem) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "INSERT INTO LineItem VALUES (" + lineItem.getOrderID() + ", " + lineItem.getProductID() + ", " + lineItem.getQuantity() + ", " + lineItem.getPrice() + ")";
-            int row = st.executeUpdate(sql);
-            System.out.println("Insert line successfully: " + sql);
-            System.out.println(row + " rows inserted");
+            PreparedStatement ps = c.prepareStatement("INSERT INTO LineItem VALUES (?, ?, ?, ?)");
+            ps.setInt(1, lineItem.getOrderID());
+            ps.setInt(2, lineItem.getProductID());
+            ps.setInt(3, lineItem.getQuantity());
+            ps.setDouble(4, lineItem.getPrice());
+            int row = ps.executeUpdate();
+            System.out.println("Insert line successfully: " + row + " rows inserted");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,11 +31,13 @@ public class LineItemDAO {
     public static void update(LineItem lineItem) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "UPDATE LineItem SET quantity = " + lineItem.getQuantity() + ", price = " + lineItem.getPrice() + " WHERE order_id = " + lineItem.getOrderID() + " AND product_id = " + lineItem.getProductID();
-            int row = st.executeUpdate(sql);
-            System.out.println("Update line successfully: " + sql);
-            System.out.println(row + " rows updated");
+            PreparedStatement ps = c.prepareStatement("UPDATE LineItem SET quantity = ?, price = ? WHERE order_id = ? AND product_id = ?");
+            ps.setInt(1, lineItem.getQuantity());
+            ps.setDouble(2, lineItem.getPrice());
+            ps.setInt(3, lineItem.getOrderID());
+            ps.setInt(4, lineItem.getProductID());
+            int row = ps.executeUpdate();
+            System.out.println("Update line successfully: " + row + " row updated");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,11 +47,11 @@ public class LineItemDAO {
     public static void delete(int orderID, int productID) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "DELETE FROM LineItem WHERE order_id = " + orderID + " AND product_id = " + productID;
-            int row = st.executeUpdate(sql);
-            System.out.println("Delete line successfully: " + sql);
-            System.out.println(row + " rows deleted");
+            PreparedStatement ps = c.prepareStatement("DELETE FROM LineItem WHERE order_id = ? AND  product_id = ?");
+            ps.setInt(1, orderID);
+            ps.setInt(2, productID);
+            int row = ps.executeUpdate();
+            System.out.println("Delete line successfully: " + row + " rows deleted");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,9 +62,8 @@ public class LineItemDAO {
         ArrayList<LineItem> result = new ArrayList<LineItem>();
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM LineItem";
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM LineItem");
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int order_id = rs.getInt("order_id");
                 int product_id = rs.getInt("product_id");
@@ -80,9 +84,10 @@ public class LineItemDAO {
         LineItem result = null;
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM LineItem WHERE order_id = " + oderID + " AND product_id = " + productID;
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM LineItem WHERE order_id = ? AND product_id = ?");
+            ps.setInt(1, oderID);
+            ps.setInt(2, productID);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int order_id = rs.getInt("order_id");
                 int product_id = rs.getInt("product_id");
@@ -91,29 +96,6 @@ public class LineItemDAO {
 
                 result = new LineItem(order_id, product_id, quantity, price);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static ArrayList<LineItem> selectByCondition(String condition) {
-        ArrayList<LineItem> result = new ArrayList<LineItem>();
-        try {
-            Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM LineItem WHERE " + condition;
-            ResultSet rs = st.executeQuery(sql);
-            while (rs.next()) {
-                int order_id = rs.getInt("order_id");
-                int product_id = rs.getInt("product_id");
-                int quantity = rs.getInt("quantity");
-                double price = rs.getDouble("price");
-
-                LineItem lineItem = new LineItem(order_id, product_id, quantity, price);
-                result.add(lineItem);
-            }
-            DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
         }

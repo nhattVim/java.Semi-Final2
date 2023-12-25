@@ -4,10 +4,7 @@ import common.DatabaseConnector;
 import entities.Order;
 import entities.Product;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ProductDAO {
@@ -15,11 +12,12 @@ public class ProductDAO {
     public static void insert(Product product) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "INSERT INTO Product VALUES (" + product.getProductID() +", '" + product.getProductName() +"', '" + product.getListPrice()+ "')";
-            int row = st.executeUpdate(sql);
-            System.out.println("Insert product successfully: " + sql);
-            System.out.println(row + " rows inserted");
+            PreparedStatement ps = c.prepareStatement("INSERT INTO Product VALUES (?, ?, ?)");
+            ps.setInt(1, product.getProductID());
+            ps.setString(2, product.getProductName());
+            ps.setDouble(3, product.getListPrice());
+            int row = ps.executeUpdate();
+            System.out.println("Insert product successfully: " + row + " row inserted");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,11 +27,12 @@ public class ProductDAO {
     public static void update(Product product) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "UPDATE Product SET product_name = '" + product.getProductName() + "', list_price = '" + product.getListPrice() + "' WHERE product_id = " + product.getProductID();
-            int row = st.executeUpdate(sql);
-            System.out.println("Update product successfully: " + sql);
-            System.out.println(row + " rows updated");
+            PreparedStatement ps = c.prepareStatement("UPDATE Product SET product_name = ?, list_price = ? WHERE product_id = ?");
+            ps.setString(1, product.getProductName());
+            ps.setDouble(2, product.getListPrice());
+            ps.setInt(3, product.getProductID());
+            int row = ps.executeUpdate();
+            System.out.println("Update product successfully: " + row + " rows updated");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,11 +42,10 @@ public class ProductDAO {
     public static void delete(int ID) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "DELETE FROM Product WHERE product_id = " + ID;
-            int row = st.executeUpdate(sql);
-            System.out.println("Delete product successfully: " + sql);
-            System.out.println(row + " rows deleted");
+            PreparedStatement ps = c.prepareStatement("DELETE FROM Product WHERE product_id = ?");
+            ps.setInt(1, ID);
+            int row = ps.executeUpdate();
+            System.out.println("Delete product successfully: " + row + " rows deleted");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,9 +56,8 @@ public class ProductDAO {
         ArrayList<Product> result = new ArrayList<Product>();
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM Product";
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM Product");
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int product_id = rs.getInt("product_id");
                 String product_name = rs.getString("product_name");
@@ -79,9 +76,9 @@ public class ProductDAO {
         Product result = null;
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM Orders WHERE product_id = " + ID;
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM Product WHERE product_id = ?");
+            ps.setInt(1, ID);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int product_id = rs.getInt("product_id");
                 String product_name = rs.getString("product_name");
@@ -89,27 +86,6 @@ public class ProductDAO {
 
                 result = new Product(product_id, product_name, list_price);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static ArrayList<Product> selectByCondition(String condition) {
-        ArrayList<Product> result = new ArrayList<Product>();
-        try {
-            Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM Product WHERE " + condition;
-            ResultSet rs = st.executeQuery(sql);
-            while (rs.next()) {
-                int product_id = rs.getInt("product_id");
-                String product_name = rs.getString("product_name");
-                double list_price = rs.getDouble("list_price");
-
-                result.add(new Product(product_id, product_name, list_price));
-            }
-            DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
         }

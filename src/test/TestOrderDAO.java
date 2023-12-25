@@ -52,11 +52,5 @@ public class TestOrderDAO {
         /* Test select by id */
 //        Order order = OrderDAO.selectById(5);
 //        System.out.println(order.toString());
-
-        /* Test select by condition */
-        ArrayList<Order> list = OrderDAO.selectByCondition("order_id < 10");
-        for (Order order : list) {
-            System.out.println(order.toString());
-        }
     }
 }

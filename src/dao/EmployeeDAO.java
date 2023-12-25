@@ -15,11 +15,13 @@ public class EmployeeDAO {
     public static void insert(Employee employee) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "INSERT INTO Employee VALUES (" +employee.getEmployeeID()+ ", '" +employee.getEmployeeName()+ "', '" +employee.getSalary()+ "', " +employee.getSpvrID()+")";
-            int row = st.executeUpdate(sql);
-            System.out.println("Insert employee successfully: " + sql);
-            System.out.println(row + " row insert");
+            PreparedStatement pst = c.prepareStatement("INSERT INTO Employee VALUES (?, ?, ?, ?)");
+            pst.setInt(1, employee.getEmployeeID());
+            pst.setString(2, employee.getEmployeeName());
+            pst.setDouble(3, employee.getSalary());
+            pst.setInt(4, employee.getSpvrID());
+            int row = pst.executeUpdate();
+            System.out.println("Insert employee successfully: " + row + " rows insert");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,11 +31,13 @@ public class EmployeeDAO {
     public static void update(Employee employee) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "UPDATE Employee SET employee_name = '" +employee.getEmployeeName()+ "' , salary = " +employee.getSalary()+ ", supervisor_id = " +employee.getSpvrID()+ " WHERE employee_id = " + employee.getEmployeeID();
-            int row = st.executeUpdate(sql);
-            System.out.println("Update employee successfully: " + sql);
-            System.out.println(row + " row update");
+            PreparedStatement pst = c.prepareStatement("UPDATE Employee SET employee_name = ?, salary = ?, supervisor_id = ? WHERE employee_id = ?");
+            pst.setString(1, employee.getEmployeeName());
+            pst.setDouble(2, employee.getSalary());
+            pst.setInt(3, employee.getSpvrID());
+            pst.setInt(4, employee.getEmployeeID());
+            int row = pst.executeUpdate();
+            System.out.println("Update employee successfully: " + row + " rows update");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,11 +47,10 @@ public class EmployeeDAO {
     public static void delete(int ID) {
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "DELETE FROM Employee WHERE employee_id = " + ID;
-            int row = st.executeUpdate(sql);
-            System.out.println("Delete employee successfully: " + sql);
-            System.out.println(row + " row delete");
+            PreparedStatement ps = c.prepareStatement("DELETE FROM Employee WHERE employee_id = ?");
+            ps.setInt(1, ID);
+            int row = ps.executeUpdate();
+            System.out.println("Delete employee successfully: " + row + " row delete");
             DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,9 +61,8 @@ public class EmployeeDAO {
         ArrayList<Employee> result = new ArrayList<Employee>();
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM Employee";
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM Employee");
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int employee_id  = rs.getInt("employee_id");
                 String employee_name = rs.getString("employee_name");
@@ -81,9 +83,9 @@ public class EmployeeDAO {
         Employee result = null;
         try {
             Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM Employee WHERE employee_id = " + ID;
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM Employee WHERE employee_id = ?");
+            ps.setInt(1, ID);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int employee_id  = rs.getInt("employee_id");
                 String employee_name = rs.getString("employee_name");
@@ -91,29 +93,6 @@ public class EmployeeDAO {
                 int spvr_id = rs.getInt("supervisor_id");
                 result = new Employee(employee_id, employee_name, salary, spvr_id);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static ArrayList<Employee> selectByCondition(String condition) {
-        ArrayList result = new ArrayList<Employee>();
-        try {
-            Connection c = DatabaseConnector.getConnection();
-            Statement st = c.createStatement();
-            String sql = "SELECT * FROM Employee WHERE " + condition;
-            ResultSet rs = st.executeQuery(sql);
-            while (rs.next()) {
-                int employee_id  = rs.getInt("employee_id");
-                String employee_name = rs.getString("employee_name");
-                double salary = rs.getDouble("salary");
-                int spvr_id = rs.getInt("supervisor_id");
-
-                Employee employee = new Employee(employee_id, employee_name, salary, spvr_id);
-                result.add(employee);
-            }
-            DatabaseConnector.closeConnection(c);
         } catch (Exception e) {
             e.printStackTrace();
         }

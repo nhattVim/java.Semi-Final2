@@ -30,7 +30,7 @@ create table Orders
     odrer_date   date,
     customer_id int(10),
     employee_id int(10),
-    total int(10),
+    total       double,
     PRIMARY KEY (order_id)
 );
 
